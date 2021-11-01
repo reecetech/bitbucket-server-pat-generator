@@ -7,7 +7,7 @@
 can hand out Personal Access Tokens (PAT) to be used in-place of user+password authentication.
 
 When machine (rather than human) access to Stash is required, ideally it should be via short-lived credentials.  This
-GitHub Action will take user+password credentials, and use them to generate a PAT.  You GitHub Actions workflow should
+GitHub Action will take user+password credentials, and use them to generate a PAT.  Your GitHub Actions workflow should
 then use the PAT whenever authenticating to Stash.
 
 **Wait. What?  🤔**
