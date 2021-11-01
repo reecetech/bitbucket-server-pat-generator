@@ -1,0 +1,43 @@
+[MASTER]
+persistent=no
+
+[MESSAGES CONTROL]
+disable=cyclic-import,
+        duplicate-code,
+        fixme,
+        locally-disabled,
+        locally-enabled,
+        relative-import,
+        star-args,
+        too-few-public-methods,
+        too-many-instance-attributes,
+
+[REPORTS]
+output-format=colorized
+reports=no
+
+[BASIC]
+bad-functions=
+include-naming-hint=yes
+
+[FORMAT]
+max-line-length=120
+
+[DESIGN]
+max-args=8
+max-locals=20
+max-returns=10
+max-branches=12
+
+[IMPORTS]
+deprecated-modules=md5,
+                   multifile,
+                   new,
+                   popen2,
+                   posixfile,
+                   rfc822,
+                   sha,
+                   optparse,
+
+[SIMILARITIES]
+ignore-imports=yes

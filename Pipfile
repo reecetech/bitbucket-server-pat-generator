@@ -1,0 +1,14 @@
+[[source]]
+name = "pypi"
+verify_ssl = true
+url = "https://pypi.org/simple"
+
+[requires]
+python_version = "3.10"  # Should match action.yml "actions/setup-python" step
+
+[packages]
+ldap3 = "*"
+requests = "*"
+
+[dev-packages]
+pylint = "*"

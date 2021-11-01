@@ -1,0 +1,54 @@
+---
+name: Test and Release
+
+on:
+  push:
+    branches:
+      - '**'
+    tags-ignore:
+      - '**'
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.10'  # Should match Pipfile / "python_version"
+
+      - name: Setup Python dependencies
+        shell: bash
+        run: |
+          pip install pipenv
+          pipenv install --dev --system
+
+      - name: Run pylint
+        shell: bash
+        run: pylint --rcfile .pylintrc *.py
+
+  release:
+    needs:
+      - lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Get next version
+        uses: reecetech/version-increment@2021.10.5
+        id: version
+        with:
+          scheme: calver
+
+      - name: Release version
+        uses: marvinpinto/action-automatic-releases@919008cf3f741b179569b7a6fb4d8860689ab7f0
+        if: ${{ github.ref == 'refs/heads/main' }}
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          draft: false
+          prerelease: false
+          automatic_release_tag: "${{ steps.version.outputs.version }}"
