@@ -1,0 +1,105 @@
+---
+name: 'Bitbucket Server PAT Generator'
+description: Generates a Bitbucket Server Personal Access Token
+
+branding:
+  icon: unlock
+  color: purple
+
+inputs:
+  base_url:
+    description: 'Base URL of Bitbucket Server'
+    required: true
+  username:
+    description: 'Username to connect to Bitbucket Server'
+    required: true
+  password:
+    description: 'Password to connect to Bitbucket Server'
+    required: true
+  mode:
+    description: 'Mode to run in - either `create` or `revoke`'
+    required: false
+    default: 'create'
+  pat_id:
+    description: 'The ID of the PAT to revoke (only used if `mode` is `revoke`)'
+    requred: false
+  valid_days:
+    description: 'Days the PAT will be valid'
+    required: false
+    default: 1
+  max_retries:
+    description: 'Number of times to attempt to generate a PAT'
+    required: false
+    default: 10
+  seconds_between_retries:
+    description: 'Number of seconds to wait before retrying to generate a PAT'
+    required: false
+    default: 30
+  check_using_ldap_bind:
+    description: |
+        Check the password validity using an LDAP bind to avoid Bitbucket
+        requiring a CAPTCHA after failed authentication attempts
+    required: false
+    default: false
+  ldap_hosts:
+    description: 'Comma separated list of LDAP hosts (only used if `check_using_ldap_bind` is `true`)'
+    required: false
+  ldap_path:
+    description: |
+      The path where the username will be found in the LDAP tree (only used if `check_using_ldap_bind` is `true`)
+
+      For example, if the user object is `CN=username,OU=tech,OU=Accounts,DC=example,DC=org`, then set `ldap_path` to:
+      `OU=tech,OU=Accounts,DC=example,DC=org`
+  ldap_port:
+    description: 'TCP port to connect to LDAP hosts (only used if `check_using_ldap_bind` is `true`)'
+    required: false
+    default: 389
+  pat_uri:
+    description: 'The REST endpoint for PAT actions'
+    required: false
+    default: 'rest/access-tokens/1.0/users'
+
+outputs:
+  username:
+    description: 'Username to connect to Bitbucket Server'
+    value: ${{ inputs.username }}
+  pat:
+    description: 'PAT to connect to Bitbucket Server'
+    value: ${{ steps.pat.outputs.pat }}
+  pat_id:
+    description: 'ID of the PAT (can be used to revoke)'
+    value: ${{ steps.pat.outputs.pat_id }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Setup Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.10'  # Should match Pipfile / "python_version"
+
+    - name: Setup Python dependencies
+      shell: bash
+      run: |
+        pip install pipenv
+        PIPENV_PIPFILE=${{ github.action_path }}/Pipfile pipenv install --keep-outdated
+
+    - id: pat
+      shell: bash
+      run: |
+        PIPENV_PIPFILE=${{ github.action_path }}/Pipfile pipenv run \
+          python ${{ github.action_path }}/pat_helper.py \
+            ${{ input.mode }} \
+            --check-using-ldap-bind ${{ input.check_using_ldap_bind }}
+      env:
+        base_url: ${{ inputs.base_url }}
+        username: ${{ inputs.increment }}
+        password: ${{ inputs.scheme }}
+        pat_id: ${{ inputs.pat_id }}
+        valid_days: ${{ inputs.valid_days }}
+        max_retries: ${{ inputs.max_retries }}
+        seconds_between_retries: ${{ inputs.seconds_between_retries }}
+        ldap_hosts: ${{ inputs.ldap_hosts }}
+        ldap_path: ${{ inputs.ldap_path }}
+        ldap_port: ${{ inputs.ldap_port }}
+        pat_uri: ${{ inputs.pat_uri }}

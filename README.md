@@ -51,7 +51,7 @@ We have chosen not to create a new Vault secrets engine, as we could deliver thi
         id: stash
         uses: reecetech/bitbucket-server-pat-generator@2021.11.1
         with:
-          url: https://stash.example.org/
+          base_url: https://stash.example.org/
           username: ${{ steps.vault.outputs.username }}
           password: ${{ steps.vault.outputs.password }}
 
@@ -72,25 +72,23 @@ We have chosen not to create a new Vault secrets engine, as we could deliver thi
 
 ### 📤 Outputs
 
-🚧 To be completed
-
 | name            | description                                                        |
 | :---            | :---                                                               |
+| username        | The username to connect to Stash                                   |
+| pat             | The personal access token to use to connect to Stash               |
+| pat_id          | The ID of the PAT which can be used to revoke the token            |
+
+### 🚧 Limitations
+
+Currently the Action will only generate PATs with REPO_WRITE and PROJECT_WRITE permissions.  Further contributions
+are required to support either read-only or admin PATs.
 
 ## 💕 Contributing
 
 Please raise a pull request, but note the testing tools below
 
-### bats
+### pylint
 
-BATS is used to test the logic of the shell scripts.
+pylint is used to lint the Python code
 
-See: https://github.com/bats-core/bats-core
-
-### shellcheck
-
-Shellcheck is used to lint our shell scripts.
-
-Please use [local ignores](https://stackoverflow.com/a/52659039) if you'd like to skip any particular checks.
-
-See: https://github.com/koalaman/shellcheck
+See: https://pylint.org/
