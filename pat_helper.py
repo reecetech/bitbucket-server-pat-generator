@@ -26,7 +26,7 @@ from ldap3 import Server, Connection, ALL
 LDAP_PATH = ''
 LDAP_HOSTS = []
 LDAP_PORT = 389
-MAX_RETRIES = 10
+MAX_ATTEMPTS = 10
 PASSWORD = None
 PAT = None
 PAT_ID = None
@@ -35,7 +35,7 @@ STASH_HOST = ''
 STASH_PAT_URI = 'rest/access-tokens/1.0/users'
 USER_LDAP = None
 USERNAME = None
-WAIT_BETWEEN_RETRIES = 30  # seconds
+WAIT_BETWEEN_ATTEMPTS = 30  # seconds
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -63,12 +63,12 @@ def parse_env():
     if os.environ.get('pat_uri'):
         global STASH_PAT_URI
         STASH_PAT_URI = get_from_env('pat_uri').lstrip('/')
-    if os.environ.get('max_retries'):
-        global MAX_RETRIES
-        MAX_RETRIES = get_from_env('max_retries')
-    if os.environ.get('seconds_between_retries'):
-        global WAIT_BETWEEN_RETRIES
-        WAIT_BETWEEN_RETRIES = get_from_env('seconds_between_retries')
+    if os.environ.get('max_attempts'):
+        global MAX_ATTEMPTS
+        MAX_ATTEMPTS = get_from_env('max_attempts')
+    if os.environ.get('seconds_between_attempts'):
+        global WAIT_BETWEEN_ATTEMPTS
+        WAIT_BETWEEN_ATTEMPTS = get_from_env('seconds_between_attempts')
     if os.environ.get('valid_days'):
         global PAT_VALID
         PAT_VALID = get_from_env('valid_days')
@@ -96,7 +96,7 @@ def get_ldap_vars():
 def test_password(host):
     server = Server(host=host, port=LDAP_PORT, use_ssl=False, get_info=ALL)
     connection = Connection(server, user=USER_LDAP, password=PASSWORD, version=3, authentication='SIMPLE')
-    for _ in range(MAX_RETRIES):
+    for _ in range(MAX_ATTEMPTS):
         try:
             if connection.bind():
                 print(f"✅ Password for user {USERNAME} is valid with {host}")
@@ -106,11 +106,11 @@ def test_password(host):
         except Exception as err:  # pylint: disable=broad-except
             print(f"💥 Exception trying username + password on {host}:\n{err}")
 
-        if _ != max(range(MAX_RETRIES)):
-            print(f"⏱ Trying again in {WAIT_BETWEEN_RETRIES} seconds")
-            time.sleep(WAIT_BETWEEN_RETRIES)
+        if _ != max(range(MAX_ATTEMPTS)):
+            print(f"⏱ Trying again in {WAIT_BETWEEN_ATTEMPTS} seconds")
+            time.sleep(WAIT_BETWEEN_ATTEMPTS)
         else:
-            print(f"👎 Giving up, reached maximum retries ({MAX_RETRIES})")
+            print(f"👎 Giving up, reached maximum attempts ({MAX_ATTEMPTS})")
             sys.exit(127)
 
 def token_name():
@@ -130,7 +130,7 @@ def create_pat():
     }
 
     pat = None
-    for _ in range(MAX_RETRIES):
+    for _ in range(MAX_ATTEMPTS):
         pat = requests.put(f"{STASH_HOST}/{STASH_PAT_URI}/{USERNAME}", json=data, auth=(USERNAME, PASSWORD))
         if pat.status_code == 200:
             break
@@ -142,11 +142,11 @@ def create_pat():
             print(f"{pat.text}")
             sys.exit(63)
 
-        if _ != max(range(MAX_RETRIES)):
-            print(f"⏱ Trying again in {WAIT_BETWEEN_RETRIES} seconds")
-            time.sleep(WAIT_BETWEEN_RETRIES)
+        if _ != max(range(MAX_ATTEMPTS)):
+            print(f"⏱ Trying again in {WAIT_BETWEEN_ATTEMPTS} seconds")
+            time.sleep(WAIT_BETWEEN_ATTEMPTS)
         else:
-            print(f"👎 Giving up, reached maximum retries ({MAX_RETRIES})")
+            print(f"👎 Giving up, reached maximum attempts ({MAX_ATTEMPTS})")
             sys.exit(127)
 
     try:
@@ -169,7 +169,7 @@ def create_pat():
 
 def revoke_pat():
     pat = None
-    for _ in range(MAX_RETRIES):
+    for _ in range(MAX_ATTEMPTS):
         pat = requests.delete(f"{STASH_HOST}/{STASH_PAT_URI}/{USERNAME}/{PAT_ID}", auth=(USERNAME, PASSWORD))
         if pat.status_code == 204:
             break
@@ -180,6 +180,13 @@ def revoke_pat():
             print(f"{pat.headers}")
             print(f"{pat.text}")
             sys.exit(62)
+
+        if _ != max(range(MAX_ATTEMPTS)):
+            print(f"⏱ Trying again in {WAIT_BETWEEN_ATTEMPTS} seconds")
+            time.sleep(WAIT_BETWEEN_ATTEMPTS)
+        else:
+            print(f"👎 Giving up, reached maximum attempts ({MAX_ATTEMPTS})")
+            sys.exit(127)
 
     print(f"🗑 Revoked PAT ID {PAT_ID} for user {USERNAME}")
 

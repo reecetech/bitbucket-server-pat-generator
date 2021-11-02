@@ -27,11 +27,11 @@ inputs:
     description: 'Days the PAT will be valid'
     required: false
     default: 1
-  max_retries:
+  max_attempts:
     description: 'Number of times to attempt to generate a PAT'
     required: false
     default: 10
-  seconds_between_retries:
+  seconds_between_attempts:
     description: 'Number of seconds to wait before retrying to generate a PAT'
     required: false
     default: 30
@@ -97,8 +97,8 @@ runs:
         password: ${{ inputs.scheme }}
         pat_id: ${{ inputs.pat_id }}
         valid_days: ${{ inputs.valid_days }}
-        max_retries: ${{ inputs.max_retries }}
-        seconds_between_retries: ${{ inputs.seconds_between_retries }}
+        max_attempts: ${{ inputs.max_attempts }}
+        seconds_between_attempts: ${{ inputs.seconds_between_attempts }}
         ldap_hosts: ${{ inputs.ldap_hosts }}
         ldap_path: ${{ inputs.ldap_path }}
         ldap_port: ${{ inputs.ldap_port }}
