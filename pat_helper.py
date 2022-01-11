@@ -65,17 +65,19 @@ def parse_env():
         STASH_PAT_URI = get_from_env('pat_uri').lstrip('/')
     if os.environ.get('max_attempts'):
         global MAX_ATTEMPTS
-        MAX_ATTEMPTS = get_from_env('max_attempts')
+        MAX_ATTEMPTS = int(get_from_env('max_attempts'))
     if os.environ.get('seconds_between_attempts'):
         global WAIT_BETWEEN_ATTEMPTS
-        WAIT_BETWEEN_ATTEMPTS = get_from_env('seconds_between_attempts')
+        WAIT_BETWEEN_ATTEMPTS = int(get_from_env('seconds_between_attempts'))
     if os.environ.get('valid_days'):
         global PAT_VALID
-        PAT_VALID = get_from_env('valid_days')
+        PAT_VALID = int(get_from_env('valid_days'))
+
 
 def get_pat_id():
     global PAT_ID
     PAT_ID = get_from_env('pat_id')
+
 
 def get_ldap_vars():
     # required
@@ -92,6 +94,7 @@ def get_ldap_vars():
 
     global USER_LDAP
     USER_LDAP = f"CN={USERNAME},{LDAP_PATH}"
+
 
 def test_password(host):
     server = Server(host=host, port=LDAP_PORT, use_ssl=False, get_info=ALL)
@@ -113,11 +116,13 @@ def test_password(host):
             print(f"👎 Giving up, reached maximum attempts ({MAX_ATTEMPTS})")
             sys.exit(127)
 
+
 def token_name():
     name = 'local-test'
     if os.environ.get('GITHUB_REPOSITORY'):
         name = f"github-{os.environ['GITHUB_REPOSITORY']}"
     return name
+
 
 def create_pat():
     data = {
