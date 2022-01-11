@@ -17,4 +17,4 @@ WORKDIR /app
 
 COPY pat_helper.py /app/
 
-ENTRYPOINT ["python", "pat_helper.py"]
+ENTRYPOINT ["python", "/app/pat_helper.py"]
