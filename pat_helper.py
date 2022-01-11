@@ -194,6 +194,7 @@ def revoke_pat():
     PAT = 'revoked'
 
 def print_outputs():
+    print(f"::set-output name=username::${USERNAME}")
     print(f"::set-output name=pat::${PAT}")
     print(f"::set-output name=pat_id::${PAT_ID}")
 
