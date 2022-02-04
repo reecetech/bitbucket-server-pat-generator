@@ -203,6 +203,9 @@ def print_outputs():
     print(f"::set-output name=pat::{PAT}")
     print(f"::set-output name=pat_id::{PAT_ID}")
 
+    # _STATE_CLEANUP_PAT_ID will be used in the post action phase to automatically revoke the PAT
+    print(f"::save-state name=CLEANUP_PAT_ID::{PAT_ID}")
+
 ##==--------------------------------------------------------------------
 ##  Main...
 
