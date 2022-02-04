@@ -172,6 +172,9 @@ def create_pat():
     global PAT_ID
     PAT_ID = pat_json['id']
 
+    print(f"🗝 Stash has issued PAT ID {PAT_ID} for user {USERNAME}")
+
+
 def revoke_pat():
     pat = None
     for _ in range(MAX_ATTEMPTS):
@@ -198,10 +201,14 @@ def revoke_pat():
     global PAT
     PAT = 'revoked'
 
+
 def print_outputs():
     print(f"::set-output name=username::{USERNAME}")
     print(f"::set-output name=pat::{PAT}")
     print(f"::set-output name=pat_id::{PAT_ID}")
+
+    # STATE_CLEANUP_PAT_ID will be used in the post action phase to automatically revoke the PAT
+    print(f"::save-state name=CLEANUP_PAT_ID::{PAT_ID}")
 
 ##==--------------------------------------------------------------------
 ##  Main...

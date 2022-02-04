@@ -15,6 +15,6 @@ RUN pipenv install --system --ignore-pipfile
 USER appuser
 WORKDIR /app
 
-COPY pat_helper.py /app/
+COPY pat_helper.py entrypoint_*.sh /app/
 
-ENTRYPOINT ["python", "/app/pat_helper.py"]
+ENTRYPOINT ["/app/entrypoint_main.sh"]
