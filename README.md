@@ -49,7 +49,7 @@ We have chosen not to create a new Vault secrets engine, as we could deliver thi
 
       - name: Get PAT for Stash
         id: stash
-        uses: reecetech/bitbucket-server-pat-generator@2022.3.1
+        uses: reecetech/bitbucket-server-pat-generator@2022.2.4
         with:
           base_url: https://stash.example.org/
           username: ${{ steps.vault.outputs.username }}
