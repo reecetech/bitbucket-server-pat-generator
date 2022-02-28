@@ -203,6 +203,7 @@ def revoke_pat():
 
 
 def print_outputs():
+    print(f"::add-mask::{PAT}")  # mark the PAT as secret in GitHub Actions logs
     print(f"::set-output name=username::{USERNAME}")
     print(f"::set-output name=pat::{PAT}")
     print(f"::set-output name=pat_id::{PAT_ID}")
