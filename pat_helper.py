@@ -142,7 +142,7 @@ def create_pat():
         if pat.status_code == 401:
             print(f"⏳ Password for user {USERNAME} not (yet) valid with {STASH_HOST}")
         else:
-            print('⚠️ Stash returned a non-200 and non-401 status:')
+            print(f"⚠️ Stash returned a status that was not 200 or 401: {pat.status_code}")
             print(f"{pat.headers}")
             print(f"{pat.text}")
             sys.exit(63)
@@ -184,7 +184,7 @@ def revoke_pat():
         if pat.status_code == 401:
             print(f"⏳ Password for user {USERNAME} not (yet) valid with {STASH_HOST}")
         else:
-            print('⚠️ Stash returned a non-204 and non-401 status:')
+            print(f"⚠️ Stash returned a status that was not 204 or 401: {pat.status_code}")
             print(f"{pat.headers}")
             print(f"{pat.text}")
             sys.exit(62)
