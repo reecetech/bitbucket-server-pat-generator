@@ -209,9 +209,9 @@ def print_outputs():
     print(f"::add-mask::{PAT}")  # mark the PAT as secret in GitHub Actions logs
     print(f"::add-mask::{pat_encoded}")  # mark the PAT as secret in GitHub Actions logs
     print(f"::set-output name=username::{USERNAME}")
-    print(f"::set-output name=username::{username_encoded}")
+    print(f"::set-output name=username_encoded::{username_encoded}")
     print(f"::set-output name=pat::{PAT}")
-    print(f"::set-output name=pat::{pat_encoded}")
+    print(f"::set-output name=pat_encoded::{pat_encoded}")
     print(f"::set-output name=pat_id::{PAT_ID}")
 
     # STATE_CLEANUP_PAT_ID will be used in the post action phase to automatically revoke the PAT
