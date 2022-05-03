@@ -56,7 +56,7 @@ We have chosen not to create a new Vault secrets engine, as we could deliver thi
           password: ${{ steps.vault.outputs.password }}
 
       - name: Clone repo from Stash
-        uses: reecetech/git-clone@2021.11.1
+        uses: example/git-clone
         with:
           url: https://stash.example.com/scm/example/repo.git
           username: ${{ steps.vault.outputs.username }}
@@ -72,11 +72,13 @@ We have chosen not to create a new Vault secrets engine, as we could deliver thi
 
 ### 📤 Outputs
 
-| name            | description                                                        |
-| :---            | :---                                                               |
-| username        | The username to connect to Stash                                   |
-| pat             | The personal access token to use to connect to Stash               |
-| pat_id          | The ID of the PAT which can be used to revoke the token            |
+| name             | description                                                        |
+| :---             | :---                                                               |
+| username         | The username to connect to Stash                                   |
+| username_encoded | The username in URL encoding                                       |
+| pat              | The personal access token to use to connect to Stash               |
+| pat_encoded      | The personal access token in URL encoding                          |
+| pat_id           | The ID of the PAT which can be used to revoke the token            |
 
 ### 🚧 Limitations
 
