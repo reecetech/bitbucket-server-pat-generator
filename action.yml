@@ -62,8 +62,12 @@ inputs:
 outputs:
   username:
     description: 'Username to connect to Bitbucket Server'
+  username_encoded:
+    description: 'Username URL encoded'
   pat:
     description: 'PAT to connect to Bitbucket Server'
+  pat_encoded:
+    description: 'PAT URL encoded'
   pat_id:
     description: 'ID of the PAT (can be used to revoke)'
 
