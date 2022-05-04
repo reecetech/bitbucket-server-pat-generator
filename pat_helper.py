@@ -204,8 +204,8 @@ def revoke_pat():
 
 
 def print_outputs():
-    username_encoded = urllib.parse.quote(USERNAME)
-    pat_encoded = urllib.parse.quote(PAT)
+    username_encoded = urllib.parse.quote(USERNAME, safe='')
+    pat_encoded = urllib.parse.quote(PAT, safe='')
     print(f"::add-mask::{PAT}")  # mark the PAT as secret in GitHub Actions logs
     print(f"::add-mask::{pat_encoded}")  # mark the PAT as secret in GitHub Actions logs
     print(f"::set-output name=username::{USERNAME}")
