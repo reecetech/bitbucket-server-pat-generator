@@ -97,11 +97,6 @@ We have chosen not to create a new Vault secrets engine, as we could deliver thi
 
 <!-- AUTO-DOC-OUTPUT:END -->
 
-## 🚧 Limitations
-
-Currently the Action will only generate PATs with REPO_WRITE and PROJECT_WRITE permissions.  Further contributions
-are required to support either read-only or admin PATs.
-
 ## 💕 Contributing
 
 Please raise a pull request, but note the testing tools below
