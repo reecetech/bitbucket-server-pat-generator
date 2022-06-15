@@ -31,9 +31,7 @@ simplify the implementation on the GitHub Actions side, since you could just use
 We have chosen not to create a new Vault secrets engine, as we could deliver this GitHub Action more quickly and simply
 (as opposed to creating, building, publishing and installing a Vault plugin).
 
-## 📄 Use
-
-### ⌨️ Example
+## ⌨️ Example
 
 ```yaml
       - name: Get creds from Vault
@@ -63,24 +61,11 @@ We have chosen not to create a new Vault secrets engine, as we could deliver thi
           password: ${{ steps.stash.outputs.pat }}
 ```
 
-### 📥 Inputs
+## Inputs
 
-🚧 To be completed
+## Outputs
 
-| name      | description                                               | required | default  |
-| :---      | :---                                                      | :---     | :---     |
-
-### 📤 Outputs
-
-| name             | description                                                        |
-| :---             | :---                                                               |
-| username         | The username to connect to Stash                                   |
-| username_encoded | The username in URL encoding                                       |
-| pat              | The personal access token to use to connect to Stash               |
-| pat_encoded      | The personal access token in URL encoding                          |
-| pat_id           | The ID of the PAT which can be used to revoke the token            |
-
-### 🚧 Limitations
+## 🚧 Limitations
 
 Currently the Action will only generate PATs with REPO_WRITE and PROJECT_WRITE permissions.  Further contributions
 are required to support either read-only or admin PATs.
