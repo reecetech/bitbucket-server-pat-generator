@@ -6,9 +6,6 @@ disable=cyclic-import,
         duplicate-code,
         fixme,
         locally-disabled,
-        locally-enabled,
-        relative-import,
-        star-args,
         too-few-public-methods,
         too-many-instance-attributes,
 
@@ -17,7 +14,6 @@ output-format=colorized
 reports=no
 
 [BASIC]
-bad-functions=
 include-naming-hint=yes
 
 [FORMAT]

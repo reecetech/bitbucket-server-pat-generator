@@ -41,7 +41,9 @@ WAIT_BETWEEN_ATTEMPTS = 30  # seconds
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('mode', choices=['create', 'revoke'])
-    parser.add_argument('--check-using-ldap-bind', choices=['true', 'false'], default='false')
+    parser.add_argument('-P', '--project-permissions', choices=['read', 'write', 'admin'], default='write')
+    parser.add_argument('-R', '--repository-permissions', choices=['read', 'write', 'admin'], default='write')
+    parser.add_argument('-L', '--check-using-ldap-bind', choices=['true', 'false'], default='false')
     parsed = parser.parse_args()
     return parsed
 
@@ -125,13 +127,41 @@ def token_name():
     return name
 
 
-def create_pat():
+def map_permissions(project, repository):
+    permissions = []
+
+    if project == 'admin':
+        permissions.append("REPO_ADMIN")  # Can't be less than `project`
+        permissions.append("PROJECT_ADMIN")
+        return permissions
+
+    if project == 'write':
+        if repository == 'admin':
+            permissions.append("REPO_ADMIN")
+        else:
+            permissions.append("REPO_WRITE")  # Can't be less than `project`
+        permissions.append("PROJECT_WRITE")
+        return permissions
+
+    if project == 'read':
+        if repository == 'admin':
+            permissions.append("REPO_ADMIN")
+        elif repository == 'write':
+            permissions.append("REPO_WRITE")
+        else:
+            permissions.append("REPO_READ")
+        permissions.append("PROJECT_READ")
+        return permissions
+
+    if not permissions:
+        raise RuntimeError("No permissions mapped")
+    return permissions
+
+
+def create_pat(permissions):
     data = {
         "name": token_name(),
-        "permissions": [
-            "REPO_WRITE",
-            "PROJECT_WRITE",
-        ],
+        "permissions": permissions,
         "expiryDays": PAT_VALID,
     }
 
@@ -232,7 +262,8 @@ if args.check_using_ldap_bind == 'true':
         test_password(ldap_host)
 
 if args.mode == 'create':
-    create_pat()
+    perms = map_permissions(args.project_permissions, args.repository_permissions)
+    create_pat(perms)
 else:  # revoke
     revoke_pat()
 

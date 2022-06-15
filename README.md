@@ -77,6 +77,8 @@ We have chosen not to create a new Vault secrets engine, as we could deliver thi
 | password                 | string | true     |                                  | Password to connect to Bitbucket<br>Server                                                                                                                                                                                                                                             |
 | pat_id                   | string | false    |                                  | The ID of the PAT<br>to revoke (only used if<br>`mode` is `revoke`)                                                                                                                                                                                                                    |
 | pat_uri                  | string | false    | `"rest/access-tokens/1.0/users"` | The REST endpoint for PAT<br>actions                                                                                                                                                                                                                                                   |
+| project_permissions      | string | false    | `"write"`                        | Project permissions: read, write or<br>admin                                                                                                                                                                                                                                           |
+| repository_permissions   | string | false    | `"write"`                        | Repository permissions: read, write or<br>admin                                                                                                                                                                                                                                        |
 | seconds_between_attempts | string | false    | `"30"`                           | Number of seconds to wait<br>before retrying to generate a<br>PAT                                                                                                                                                                                                                      |
 | username                 | string | true     |                                  | Username to connect to Bitbucket<br>Server                                                                                                                                                                                                                                             |
 | valid_days               | string | false    | `"1"`                            | Days the PAT will be<br>valid                                                                                                                                                                                                                                                          |
@@ -96,11 +98,6 @@ We have chosen not to create a new Vault secrets engine, as we could deliver thi
 | username_encoded | string | Username URL encoded                       |
 
 <!-- AUTO-DOC-OUTPUT:END -->
-
-## 🚧 Limitations
-
-Currently the Action will only generate PATs with REPO_WRITE and PROJECT_WRITE permissions.  Further contributions
-are required to support either read-only or admin PATs.
 
 ## 💕 Contributing
 
