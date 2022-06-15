@@ -31,9 +31,7 @@ simplify the implementation on the GitHub Actions side, since you could just use
 We have chosen not to create a new Vault secrets engine, as we could deliver this GitHub Action more quickly and simply
 (as opposed to creating, building, publishing and installing a Vault plugin).
 
-## 📄 Use
-
-### ⌨️ Example
+## ⌨️ Example
 
 ```yaml
       - name: Get creds from Vault
@@ -63,24 +61,43 @@ We have chosen not to create a new Vault secrets engine, as we could deliver thi
           password: ${{ steps.stash.outputs.pat }}
 ```
 
-### 📥 Inputs
+## Inputs
 
-🚧 To be completed
+<!-- AUTO-DOC-INPUT:START - Do not remove or modify this section -->
 
-| name      | description                                               | required | default  |
-| :---      | :---                                                      | :---     | :---     |
+|          INPUT           |  TYPE  | REQUIRED |             DEFAULT              |                                                                                                                                      DESCRIPTION                                                                                                                                       |
+|--------------------------|--------|----------|----------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| base_url                 | string | true     |                                  | Base URL of Bitbucket Server<br>                                                                                                                                                                                                                                                       |
+| check_using_ldap_bind    | string | false    | `"false"`                        | Check the password validity using<br>an LDAP bind to avoid<br>Bitbucket requiring a CAPTCHA after<br>failed authentication attempts                                                                                                                                                    |
+| ldap_hosts               | string | false    |                                  | Comma separated list of LDAP<br>hosts (only used if `check_using_ldap_bind`<br>is `true`)                                                                                                                                                                                              |
+| ldap_path                | string | false    |                                  | The path where the username<br>will be found in the<br>LDAP tree (only used if<br>`check_using_ldap_bind` is `true`) For example,<br>if the user object is<br>`CN=username,OU=tech,OU=Accounts,DC=example,DC=org`, then set `ldap_path` to:<br>`OU=tech,OU=Accounts,DC=example,DC=org` |
+| ldap_port                | string | false    | `"389"`                          | TCP port to connect to<br>LDAP hosts (only used if<br>`check_using_ldap_bind` is `true`)                                                                                                                                                                                               |
+| max_attempts             | string | false    | `"10"`                           | Number of times to attempt<br>to generate a PAT                                                                                                                                                                                                                                        |
+| mode                     | string | false    | `"create"`                       | Mode to run in -<br>either `create` or `revoke`                                                                                                                                                                                                                                        |
+| password                 | string | true     |                                  | Password to connect to Bitbucket<br>Server                                                                                                                                                                                                                                             |
+| pat_id                   | string | false    |                                  | The ID of the PAT<br>to revoke (only used if<br>`mode` is `revoke`)                                                                                                                                                                                                                    |
+| pat_uri                  | string | false    | `"rest/access-tokens/1.0/users"` | The REST endpoint for PAT<br>actions                                                                                                                                                                                                                                                   |
+| seconds_between_attempts | string | false    | `"30"`                           | Number of seconds to wait<br>before retrying to generate a<br>PAT                                                                                                                                                                                                                      |
+| username                 | string | true     |                                  | Username to connect to Bitbucket<br>Server                                                                                                                                                                                                                                             |
+| valid_days               | string | false    | `"1"`                            | Days the PAT will be<br>valid                                                                                                                                                                                                                                                          |
 
-### 📤 Outputs
+<!-- AUTO-DOC-INPUT:END -->
 
-| name             | description                                                        |
-| :---             | :---                                                               |
-| username         | The username to connect to Stash                                   |
-| username_encoded | The username in URL encoding                                       |
-| pat              | The personal access token to use to connect to Stash               |
-| pat_encoded      | The personal access token in URL encoding                          |
-| pat_id           | The ID of the PAT which can be used to revoke the token            |
+## Outputs
 
-### 🚧 Limitations
+<!-- AUTO-DOC-OUTPUT:START - Do not remove or modify this section -->
+
+|      OUTPUT      |  TYPE  |                DESCRIPTION                 |
+|------------------|--------|--------------------------------------------|
+| pat              | string | PAT to connect to Bitbucket<br>Server      |
+| pat_encoded      | string | PAT URL encoded                            |
+| pat_id           | string | ID of the PAT (can<br>be used to revoke)   |
+| username         | string | Username to connect to Bitbucket<br>Server |
+| username_encoded | string | Username URL encoded                       |
+
+<!-- AUTO-DOC-OUTPUT:END -->
+
+## 🚧 Limitations
 
 Currently the Action will only generate PATs with REPO_WRITE and PROJECT_WRITE permissions.  Further contributions
 are required to support either read-only or admin PATs.
