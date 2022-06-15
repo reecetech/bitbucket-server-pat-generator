@@ -1,7 +1,7 @@
 ---
 name: Test and Release
 
-on:
+on:  # yamllint disable-line rule:truthy
   push:
     branches:
       - '**'
@@ -9,14 +9,14 @@ on:
       - '**'
 
 jobs:
-  lint:
+  pylint:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Setup Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3
         with:
           python-version: '3.10'  # Should match Pipfile / "python_version"
 
@@ -30,25 +30,74 @@ jobs:
         shell: bash
         run: pylint --rcfile .pylintrc *.py
 
+  yamllint:
+    runs-on: ubuntu-latest
+    steps:
+      - id: checkout
+        name: Checkout code 🛒
+        uses: actions/checkout@v3
+
+      - id: yamllint
+        name: Run yamllint 📃
+        uses: ibiqlik/action-yamllint@v3
+        with:
+          strict: true
+
+  update-doc:
+    if: ${{ github.ref_name != github.event.repository.default_branch }}
+    runs-on: ubuntu-latest
+    steps:
+      - id: checkout
+        name: Checkout code 🛒
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # otherwise, you will failed to push refs to dest repo
+
+      - id: auto-doc
+        name: Run auto-doc 📃
+        uses: tj-actions/auto-doc@v1.2.15
+        with:
+          action: 'action.yaml'
+
+      - id: changes
+        name: Verify changed files 🔎
+        uses: tj-actions/verify-changed-files@v9.1
+        with:
+          files: |
+            README.md
+
+      - id: commit
+        if: steps.changes.outputs.files_changed == 'true'
+        name: Commit README changes 📥
+        uses: EndBug/add-and-commit@v9
+        with:
+          message: 'Update README'
+          committer_name: 'GitHub Actions'
+          committer_email: 'actions@github.com'
+          add: 'README.md'
+
   release:
+    if: ${{ github.ref_name == github.event.repository.default_branch }}
     needs:
-      - lint
+      - pylint
+      - yamllint
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Get next version
-        uses: reecetech/version-increment@2021.10.5
+        uses: reecetech/version-increment@2022.5.1
         id: version
         with:
           scheme: calver
 
-      - name: Release version
+      - id: release
+        if: ${{ github.ref_name == github.event.repository.default_branch }}
+        name: Release version 📦
         uses: marvinpinto/action-automatic-releases@919008cf3f741b179569b7a6fb4d8860689ab7f0
-        if: ${{ github.ref == 'refs/heads/main' }}
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           draft: false
           prerelease: false
-          automatic_release_tag: "${{ steps.version.outputs.version }}"
+          automatic_release_tag: "${{ steps.version.outputs.v-version }}"
