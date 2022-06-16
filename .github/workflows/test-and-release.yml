@@ -100,4 +100,4 @@ jobs:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           draft: false
           prerelease: false
-          automatic_release_tag: "${{ steps.version.outputs.v-version }}"
+          automatic_release_tag: "${{ steps.version.outputs.version }}"
