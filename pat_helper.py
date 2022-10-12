@@ -93,7 +93,7 @@ def get_ldap_vars():
     # optional
     if os.environ.get('ldap_port'):
         global LDAP_PORT
-        LDAP_PORT = get_from_env('ldap_port')
+        LDAP_PORT = int(get_from_env('ldap_port'))
 
     global USER_LDAP
     USER_LDAP = f"CN={USERNAME},{LDAP_PATH}"
