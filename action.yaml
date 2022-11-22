@@ -67,7 +67,7 @@ inputs:
     required: false
     default: 'write'
   run_in_docker:
-    description: 'Run in a Docker image (if `actions/setup-python@v3` does not work for you)'
+    description: 'Run in a Docker image (if `actions/setup-python@v4` does not work for you)'
     required: false
     default: false
 
@@ -89,7 +89,7 @@ runs:
     - id: python
       name: Setup Python 🐍
       if: ${{ inputs.run_in_docker == 'false' }}
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@v4
       with:
         python-version: '3.10'  # Should match Pipfile / "python_version"
 
@@ -163,6 +163,7 @@ runs:
         set -euo pipefail
         docker run \
           --rm \
+          --user "$(id -u):$(id -g)" \
           --entrypoint "/app/entrypoint_main.sh" \
           --env base_url \
           --env username \
@@ -175,6 +176,10 @@ runs:
           --env ldap_path \
           --env ldap_port \
           --env pat_uri \
+          --env GITHUB_OUTPUT \
+          --env GITHUB_STATE \
+          --volume "${GITHUB_OUTPUT}:${GITHUB_OUTPUT}" \
+          --volume "${GITHUB_STATE}:${GITHUB_STATE}" \
           pat-helper \
             "${{ inputs.mode }}" \
             --check-using-ldap-bind "${{ inputs.check_using_ldap_bind }}" \
