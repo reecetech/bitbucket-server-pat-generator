@@ -238,14 +238,16 @@ def print_outputs():
     pat_encoded = urllib.parse.quote(PAT, safe='')
     print(f"::add-mask::{PAT}")  # mark the PAT as secret in GitHub Actions logs
     print(f"::add-mask::{pat_encoded}")  # mark the PAT as secret in GitHub Actions logs
-    print(f"::set-output name=username::{USERNAME}")
-    print(f"::set-output name=username_encoded::{username_encoded}")
-    print(f"::set-output name=pat::{PAT}")
-    print(f"::set-output name=pat_encoded::{pat_encoded}")
-    print(f"::set-output name=pat_id::{PAT_ID}")
+    with open(os.environ['GITHUB_OUTPUT'], 'a', encoding='utf-8') as output:
+        print(f"username={USERNAME}", file=output)
+        print(f"username_encoded={username_encoded}", file=output)
+        print(f"pat={PAT}", file=output)
+        print(f"pat_encoded={pat_encoded}", file=output)
+        print(f"pat_id={PAT_ID}", file=output)
 
     # STATE_CLEANUP_PAT_ID will be used in the post action phase to automatically revoke the PAT
-    print(f"::save-state name=CLEANUP_PAT_ID::{PAT_ID}")
+    with open(os.environ['GITHUB_STATE'], 'a', encoding='utf-8') as state:
+        print(f"CLEANUP_PAT_ID={PAT_ID}", file=state)
 
 ##==--------------------------------------------------------------------
 ##  Main...

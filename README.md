@@ -36,7 +36,7 @@ We have chosen not to create a new Vault secrets engine, as we could deliver thi
 ```yaml
       - name: Get creds from Vault
         id: vault
-        uses: hashicorp/vault-action@v2.4.0
+        uses: hashicorp/vault-action@v2.4.3
         with:
           url: https://vault.example.org/
           method: jwt
@@ -47,7 +47,7 @@ We have chosen not to create a new Vault secrets engine, as we could deliver thi
 
       - name: Get PAT for Stash
         id: stash
-        uses: reecetech/bitbucket-server-pat-generator@2022.6.3
+        uses: reecetech/bitbucket-server-pat-generator@2022.11.1
         with:
           base_url: https://stash.example.org/
           username: ${{ steps.vault.outputs.username }}
