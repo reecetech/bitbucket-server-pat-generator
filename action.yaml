@@ -66,6 +66,10 @@ inputs:
     description: 'Repository permissions: read, write or admin'
     required: false
     default: 'write'
+  run_in_docker:
+    description: 'Run in a Docker image (if `actions/setup-python@v4` does not work for you)'
+    required: false
+    default: false
 
 outputs:
   username:
@@ -80,24 +84,104 @@ outputs:
     description: 'ID of the PAT (can be used to revoke)'
 
 runs:
-  using: "docker"
-  image: 'Dockerfile'
-  args:
-    - ${{ inputs.mode }}
-    - --check-using-ldap-bind=${{ inputs.check_using_ldap_bind }}
-    - --project-permissions=${{ inputs.project_permissions }}
-    - --repository-permissions=${{ inputs.repository_permissions }}
-  entrypoint: '/app/entrypoint_main.sh'
-  post-entrypoint: '/app/entrypoint_post_cleanup.sh'
-  env:
-    base_url: ${{ inputs.base_url }}
-    username: ${{ inputs.username }}
-    password: ${{ inputs.password }}
-    pat_id: ${{ inputs.pat_id }}
-    valid_days: ${{ inputs.valid_days }}
-    max_attempts: ${{ inputs.max_attempts }}
-    seconds_between_attempts: ${{ inputs.seconds_between_attempts }}
-    ldap_hosts: ${{ inputs.ldap_hosts }}
-    ldap_path: ${{ inputs.ldap_path }}
-    ldap_port: ${{ inputs.ldap_port }}
-    pat_uri: ${{ inputs.pat_uri }}
+  using: "composite"
+  steps:
+    - id: python
+      name: Setup Python 🐍
+      if: ${{ inputs.run_in_docker == 'false' }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'  # Should match Pipfile / "python_version"
+
+    - id: deps
+      name: Setup Python dependencies 📦
+      if: ${{ inputs.run_in_docker == 'false' }}
+      shell: bash
+      run: |
+        set -euo pipefail
+        pip install pipenv
+        PIPENV_PIPFILE=${{ github.action_path }}/Pipfile pipenv install --ignore-pipfile
+
+    - id: pat
+      name: Run pat_helper.py 🏃
+      if: ${{ inputs.run_in_docker == 'false' }}
+      env:
+        base_url: ${{ inputs.base_url }}
+        username: ${{ inputs.username }}
+        password: ${{ inputs.password }}
+        pat_id: ${{ inputs.pat_id }}
+        valid_days: ${{ inputs.valid_days }}
+        max_attempts: ${{ inputs.max_attempts }}
+        seconds_between_attempts: ${{ inputs.seconds_between_attempts }}
+        ldap_hosts: ${{ inputs.ldap_hosts }}
+        ldap_path: ${{ inputs.ldap_path }}
+        ldap_port: ${{ inputs.ldap_port }}
+        pat_uri: ${{ inputs.pat_uri }}
+      shell: bash
+      run: |
+        set -euo pipefail
+        PIPENV_PIPFILE="${{ github.action_path }}/Pipfile" pipenv run \
+          python "${{ github.action_path }}/pat_helper.py" \
+            "${{ inputs.mode }}" \
+            --check-using-ldap-bind "${{ inputs.check_using_ldap_bind }}" \
+            --project-permissions "${{ inputs.project_permissions }}" \
+            --repository-permissions "${{ inputs.repository_permissions }}"
+
+    # In docker:
+    - id: buildx
+      name: Set up docker buildx 🐳
+      if: ${{ inputs.run_in_docker == 'true' }}
+      uses: docker/setup-buildx-action@v2
+
+    - id: build
+      name: Docker build 🛠
+      if: ${{ inputs.run_in_docker == 'true' }}
+      uses: docker/build-push-action@v3
+      with:
+        context: ${{ github.action_path }}
+        file: ${{ github.action_path }}/Dockerfile
+        push: false
+        tags: pat-helper
+
+    - id: pat-in-docker
+      name: Run pat_helper.py in docker 🎁
+      if: ${{ inputs.run_in_docker == 'true' }}
+      env:
+        base_url: ${{ inputs.base_url }}
+        username: ${{ inputs.username }}
+        password: ${{ inputs.password }}
+        pat_id: ${{ inputs.pat_id }}
+        valid_days: ${{ inputs.valid_days }}
+        max_attempts: ${{ inputs.max_attempts }}
+        seconds_between_attempts: ${{ inputs.seconds_between_attempts }}
+        ldap_hosts: ${{ inputs.ldap_hosts }}
+        ldap_path: ${{ inputs.ldap_path }}
+        ldap_port: ${{ inputs.ldap_port }}
+        pat_uri: ${{ inputs.pat_uri }}
+      shell: bash
+      run: |
+        set -euo pipefail
+        docker run \
+          --rm \
+          --user "$(id -u):$(id -g)" \
+          --entrypoint "/app/entrypoint_main.sh" \
+          --env base_url \
+          --env username \
+          --env password \
+          --env pat_id \
+          --env valid_days \
+          --env max_attempts \
+          --env seconds_between_attempts \
+          --env ldap_hosts \
+          --env ldap_path \
+          --env ldap_port \
+          --env pat_uri \
+          --env GITHUB_OUTPUT \
+          --env GITHUB_STATE \
+          --volume "${GITHUB_OUTPUT}:${GITHUB_OUTPUT}" \
+          --volume "${GITHUB_STATE}:${GITHUB_STATE}" \
+          pat-helper \
+            "${{ inputs.mode }}" \
+            --check-using-ldap-bind "${{ inputs.check_using_ldap_bind }}" \
+            --project-permissions "${{ inputs.project_permissions }}" \
+            --repository-permissions "${{ inputs.repository_permissions }}"
