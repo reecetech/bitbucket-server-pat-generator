@@ -36,7 +36,7 @@ We have chosen not to create a new Vault secrets engine, as we could deliver thi
 ```yaml
       - name: Get creds from Vault
         id: vault
-        uses: hashicorp/vault-action@v2.4.0
+        uses: hashicorp/vault-action@v2.4.3
         with:
           url: https://vault.example.org/
           method: jwt
@@ -47,7 +47,7 @@ We have chosen not to create a new Vault secrets engine, as we could deliver thi
 
       - name: Get PAT for Stash
         id: stash
-        uses: reecetech/bitbucket-server-pat-generator@2022.6.3
+        uses: reecetech/bitbucket-server-pat-generator@2022.11.1
         with:
           base_url: https://stash.example.org/
           username: ${{ steps.vault.outputs.username }}
@@ -67,21 +67,21 @@ We have chosen not to create a new Vault secrets engine, as we could deliver thi
 
 |          INPUT           |  TYPE  | REQUIRED |             DEFAULT              |                                                                                                                                      DESCRIPTION                                                                                                                                       |
 |--------------------------|--------|----------|----------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| base_url                 | string | true     |                                  | Base URL of Bitbucket Server<br>                                                                                                                                                                                                                                                       |
-| check_using_ldap_bind    | string | false    | `"false"`                        | Check the password validity using<br>an LDAP bind to avoid<br>Bitbucket requiring a CAPTCHA after<br>failed authentication attempts                                                                                                                                                    |
-| ldap_hosts               | string | false    |                                  | Comma separated list of LDAP<br>hosts (only used if `check_using_ldap_bind`<br>is `true`)                                                                                                                                                                                              |
-| ldap_path                | string | false    |                                  | The path where the username<br>will be found in the<br>LDAP tree (only used if<br>`check_using_ldap_bind` is `true`) For example,<br>if the user object is<br>`CN=username,OU=tech,OU=Accounts,DC=example,DC=org`, then set `ldap_path` to:<br>`OU=tech,OU=Accounts,DC=example,DC=org` |
-| ldap_port                | string | false    | `"389"`                          | TCP port to connect to<br>LDAP hosts (only used if<br>`check_using_ldap_bind` is `true`)                                                                                                                                                                                               |
-| max_attempts             | string | false    | `"10"`                           | Number of times to attempt<br>to generate a PAT                                                                                                                                                                                                                                        |
-| mode                     | string | false    | `"create"`                       | Mode to run in -<br>either `create` or `revoke`                                                                                                                                                                                                                                        |
-| password                 | string | true     |                                  | Password to connect to Bitbucket<br>Server                                                                                                                                                                                                                                             |
-| pat_id                   | string | false    |                                  | The ID of the PAT<br>to revoke (only used if<br>`mode` is `revoke`)                                                                                                                                                                                                                    |
-| pat_uri                  | string | false    | `"rest/access-tokens/1.0/users"` | The REST endpoint for PAT<br>actions                                                                                                                                                                                                                                                   |
-| project_permissions      | string | false    | `"write"`                        | Project permissions: read, write or<br>admin                                                                                                                                                                                                                                           |
-| repository_permissions   | string | false    | `"write"`                        | Repository permissions: read, write or<br>admin                                                                                                                                                                                                                                        |
-| seconds_between_attempts | string | false    | `"30"`                           | Number of seconds to wait<br>before retrying to generate a<br>PAT                                                                                                                                                                                                                      |
-| username                 | string | true     |                                  | Username to connect to Bitbucket<br>Server                                                                                                                                                                                                                                             |
-| valid_days               | string | false    | `"1"`                            | Days the PAT will be<br>valid                                                                                                                                                                                                                                                          |
+|         base_url         | string |   true   |                                  |                                                                                                                            Base URL of Bitbucket Server<br>                                                                                                                            |
+|  check_using_ldap_bind   | string |  false   |            `"false"`             |                                                                          Check the password validity using<br>an LDAP bind to avoid<br>Bitbucket requiring a CAPTCHA after<br>failed authentication attempts                                                                           |
+|        ldap_hosts        | string |  false   |                                  |                                                                                               Comma separated list of LDAP<br>hosts (only used if `check_using_ldap_bind`<br>is `true`)                                                                                                |
+|        ldap_path         | string |  false   |                                  | The path where the username<br>will be found in the<br>LDAP tree (only used if<br>`check_using_ldap_bind` is `true`) For example,<br>if the user object is<br>`CN=username,OU=tech,OU=Accounts,DC=example,DC=org`, then set `ldap_path` to:<br>`OU=tech,OU=Accounts,DC=example,DC=org` |
+|        ldap_port         | string |  false   |             `"389"`              |                                                                                                TCP port to connect to<br>LDAP hosts (only used if<br>`check_using_ldap_bind` is `true`)                                                                                                |
+|       max_attempts       | string |  false   |              `"10"`              |                                                                                                                    Number of times to attempt<br>to generate a PAT                                                                                                                     |
+|           mode           | string |  false   |            `"create"`            |                                                                                                                    Mode to run in -<br>either `create` or `revoke`                                                                                                                     |
+|         password         | string |   true   |                                  |                                                                                                                       Password to connect to Bitbucket<br>Server                                                                                                                       |
+|          pat_id          | string |  false   |                                  |                                                                                                          The ID of the PAT<br>to revoke (only used if<br>`mode` is `revoke`)                                                                                                           |
+|         pat_uri          | string |  false   | `"rest/access-tokens/1.0/users"` |                                                                                                                          The REST endpoint for PAT<br>actions                                                                                                                          |
+|   project_permissions    | string |  false   |            `"write"`             |                                                                                                                      Project permissions: read, write or<br>admin                                                                                                                      |
+|  repository_permissions  | string |  false   |            `"write"`             |                                                                                                                    Repository permissions: read, write or<br>admin                                                                                                                     |
+| seconds_between_attempts | string |  false   |              `"30"`              |                                                                                                           Number of seconds to wait<br>before retrying to generate a<br>PAT                                                                                                            |
+|         username         | string |   true   |                                  |                                                                                                                       Username to connect to Bitbucket<br>Server                                                                                                                       |
+|        valid_days        | string |  false   |              `"1"`               |                                                                                                                             Days the PAT will be<br>valid                                                                                                                              |
 
 <!-- AUTO-DOC-INPUT:END -->
 
@@ -91,11 +91,11 @@ We have chosen not to create a new Vault secrets engine, as we could deliver thi
 
 |      OUTPUT      |  TYPE  |                DESCRIPTION                 |
 |------------------|--------|--------------------------------------------|
-| pat              | string | PAT to connect to Bitbucket<br>Server      |
-| pat_encoded      | string | PAT URL encoded                            |
-| pat_id           | string | ID of the PAT (can<br>be used to revoke)   |
-| username         | string | Username to connect to Bitbucket<br>Server |
-| username_encoded | string | Username URL encoded                       |
+|       pat        | string |   PAT to connect to Bitbucket<br>Server    |
+|   pat_encoded    | string |              PAT URL encoded               |
+|      pat_id      | string |  ID of the PAT (can<br>be used to revoke)  |
+|     username     | string | Username to connect to Bitbucket<br>Server |
+| username_encoded | string |            Username URL encoded            |
 
 <!-- AUTO-DOC-OUTPUT:END -->
 
