@@ -16,9 +16,9 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Setup Python
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v4
         with:
-          python-version: '3.10'  # Should match Pipfile / "python_version"
+          python-version: '3.11'  # Should match Pipfile / "python_version"
 
       - name: Setup Python dependencies
         shell: bash
