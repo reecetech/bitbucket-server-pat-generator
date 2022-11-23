@@ -1,4 +1,5 @@
-FROM python:3.10-slim
+# Keep in-sync with version in Pipfile
+FROM python:3.11-slim
 
 ARG PIP_NO_CACHE_DIR=1
 RUN pip install -U pip pipenv
