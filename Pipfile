@@ -4,7 +4,7 @@ verify_ssl = true
 url = "https://pypi.org/simple"
 
 [requires]
-python_version = "3.11"  # Keep in-sync with FROM line in the Dockerfile
+python_version = "3.11"  # Keep in-sync with FROM line in the Dockerfile, and .github/workflows/test-and-release.yml
 
 [packages]
 ldap3 = "*"

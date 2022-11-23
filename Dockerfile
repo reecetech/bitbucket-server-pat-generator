@@ -1,4 +1,4 @@
-# Keep in-sync with version in Pipfile
+# Keep in-sync with version in Pipfile & .github/workflows/test-and-release.yml
 FROM python:3.11-slim
 
 ARG PIP_NO_CACHE_DIR=1
