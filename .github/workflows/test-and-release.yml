@@ -77,7 +77,6 @@ jobs:
           add: 'README.md'
 
   release:
-    if: ${{ github.ref_name == github.event.repository.default_branch }}
     needs:
       - pylint
       - yamllint
@@ -91,6 +90,19 @@ jobs:
         id: version
         with:
           scheme: calver
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: reecetech
+          password: ${{ secrets.DOCKER_PAT }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          push: true
+          tags: reecetech/bitbucket-server-pat-generator:${{ steps.version.outputs.version }}
 
       - id: release
         if: ${{ github.ref_name == github.event.repository.default_branch }}
