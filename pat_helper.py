@@ -167,7 +167,10 @@ def create_pat(permissions):
 
     pat = None
     for _ in range(MAX_ATTEMPTS):
-        pat = requests.put(f"{STASH_HOST}/{STASH_PAT_URI}/{USERNAME}", json=data, auth=(USERNAME, PASSWORD))
+        pat = requests.put(f"{STASH_HOST}/{STASH_PAT_URI}/{USERNAME}",
+                           json=data,
+                           auth=(USERNAME, PASSWORD),
+                           timeout=15)
         if pat.status_code == 200:
             break
         if pat.status_code == 401:
@@ -209,7 +212,10 @@ def create_pat(permissions):
 def revoke_pat():
     pat = None
     for _ in range(MAX_ATTEMPTS):
-        pat = requests.delete(f"{STASH_HOST}/{STASH_PAT_URI}/{USERNAME}/{PAT_ID}", auth=(USERNAME, PASSWORD))
+        pat = requests.delete(
+            f"{STASH_HOST}/{STASH_PAT_URI}/{USERNAME}/{PAT_ID}",
+            auth=(USERNAME, PASSWORD),
+            timeout=15)
         if pat.status_code == 204:
             break
         if pat.status_code == 401:
