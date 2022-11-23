@@ -81,7 +81,7 @@ outputs:
 
 runs:
   using: "docker"
-  image: docker://artifactory.reecenet.org:6555/reecetech/bitbucket-server-pat-generator:2022.11.5-pre.beee217
+  image: docker://artifactory.reecenet.org:6555/reecetech/bitbucket-server-pat-generator:2022.11.5
   args:
     - ${{ inputs.mode }}
     - --check-using-ldap-bind=${{ inputs.check_using_ldap_bind }}
