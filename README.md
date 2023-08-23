@@ -1,5 +1,7 @@
 # 🪣 Bitbucket Server PAT Generator
 
+⚠️ **No longer updated - **reece**tech no longer uses Bitbucket server, making maintance of this action difficult to verify - feel free to fork**
+
 ## 🤝 Introduction
 
 [Bitbucket Server](https://www.atlassian.com/software/bitbucket/enterprise)
